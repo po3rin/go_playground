@@ -1,3 +1,4 @@
+// 関数によって処理の差し替えを実現し、さらにインターフェイスも定義するケースで変更に強くする
 package main
 
 import "fmt"
@@ -25,3 +26,16 @@ func NewHelloFunc() DoFunc {
 	}
 	return DoFunc(f)
 }
+
+// 差し替え可能 ===========
+
+type DoStruct struct {
+	X, Y int
+}
+
+func (d DoStruct) Call() {
+	fmt.Println(d.X)
+	fmt.Println(d.Y)
+}
+
+// ======================
