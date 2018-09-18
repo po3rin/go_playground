@@ -6,24 +6,17 @@ PROJECTNAME=try-s3
 all: build run
 
 .PHONY: build
-build: ## build images of go-1.6.2 environment
+build: ## build images of go1.11.0 + aws config
 	docker build -t $(IMAGENAME) .
 
 .PHONY: run
-run: ## run container of go-1.6.2 environment
+run: ## run go1.11.0 + aws config container
 	docker run --name $(IMAGENAME) --rm -it -p 8081:8081 -v $(shell pwd):/go/src/${PROJECTNAME} $(IMAGENAME) bash
 
 .PHONY: exec
-exec: ## exec go1.6.2 container
+exec: ## exec go1.11.0 + aws config container
 	docker exec -it $(IMAGENAME) /bin/bash
 
-.PHONY: stop
-stop: ## stop container.
-	docker stop $(IMAGENAME)
-
-.PHONY: rmi
-rmi: ## remove docker image.
-	docker rmi -f $(IMAGENAME)
-
-.PHONY: clean
-clean: stop rmi ## clean up docker image & container.
+.PHONY: help
+help: ## show help.
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
