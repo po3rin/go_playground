@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-playgroung/try-gcs/handler"
+	"go-playground/try-gcs/handler"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
