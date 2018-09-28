@@ -8,5 +8,6 @@ services:
     restart: always
     environment:
       EXECUTION_ENVIRONMENT: gce
+      GCP_PROJECT_ID: prism-test-216713
     logging:
       driver: gcplogs
