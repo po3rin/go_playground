@@ -15,4 +15,5 @@ $ docker run --log-driver=gcplogs ...
 ```
 
 ## reference to study
-http://docs.docker.jp/engine/admin/logging/gcplogs.html
+https://cloud.google.com/community/tutorials/docker-gcplogs-driver
+https://qiita.com/akm/items/cc6c07181750b728d56a

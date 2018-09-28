@@ -8,3 +8,5 @@ services:
     restart: always
     environment:
       EXECUTION_ENVIRONMENT: gce
+    logging:
+      driver: gcplogs
