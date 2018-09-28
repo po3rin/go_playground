@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  try-logrus-stackdriver:
+    build: ./
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      EXECUTION_ENVIRONMENT: gce
