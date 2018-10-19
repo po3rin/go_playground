@@ -2,27 +2,15 @@ package main
 
 import (
 	"fmt"
-	"time"
+	"reflect"
 )
 
 func main() {
-	// f, err := os.Open("example.txt")
-	// if err != nil {
-	// 	println("Err")
-	// }
-	// scanner := bufio.NewScanner(f)
-	// for scanner.Scan() {
-	// 	println(scanner.Text())
-	// }
-
-	for i := 0; ; {
-		time.Sleep(1 * time.Second)
-		fmt.Println(i)
-		// i++
-	}
-
-	// for {
+	// for loop := 0; ; {
 	// 	time.Sleep(1 * time.Second)
-	// 	fmt.Println("ww")
+	// 	fmt.Println(loop)
 	// }
+	a := [3]int{2, 3, 4}
+	fmt.Println(reflect.TypeOf(a))
+	fmt.Println(reflect.TypeOf(a[:]))
 }
