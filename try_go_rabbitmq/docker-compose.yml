@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  my-queue:
+    container_name: rabbitmq
+    image: rabbitmq:3.7.4-management
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+volumes:
+  rabbitmq-data:
