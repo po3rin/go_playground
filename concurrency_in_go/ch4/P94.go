@@ -1,0 +1,42 @@
+package ch4
+
+import (
+	"fmt"
+	"time"
+)
+
+// child gorutine cancel
+func P94() {
+	doWork := func(
+		done <-chan interface{},
+		strings <-chan string,
+	) <-chan interface{} {
+		terminated := make(chan interface{})
+		go func() {
+			defer fmt.Println("do work exited")
+			defer close(terminated)
+			for {
+				select {
+				case s := <-strings:
+					fmt.Println(s)
+				case <-done:
+					return
+				}
+
+			}
+		}()
+		return terminated
+	}
+
+	done := make(chan interface{})
+	terminated := doWork(done, nil)
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		fmt.Println("cancel")
+		close(done)
+	}()
+
+	<-terminated
+	fmt.Println("Done")
+}
