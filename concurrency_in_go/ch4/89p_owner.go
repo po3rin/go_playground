@@ -8,6 +8,7 @@ func P89() {
 		go func() {
 			defer close(results)
 			for i := 0; i < 4; i++ {
+				fmt.Printf("========%+v\n", i)
 				results <- i
 			}
 		}()
@@ -22,5 +23,6 @@ func P89() {
 	}
 
 	results := chanOwner()
+	fmt.Println("yes")
 	consumer(results)
 }
