@@ -8,6 +8,7 @@ import (
 var wg sync.WaitGroup
 
 func main() {
+	// fmt.Println(runtime.NumCPU())
 	// msg := "hello"
 	// sayHello := func() {
 	// 	defer wg.Done()
@@ -55,6 +56,10 @@ func main() {
 	// ch4.P96()
 	// ch4.P100()
 	// ch4.P101()
-	ch4.P106()
+	// ch4.P106()
+	// ch4.P119()
+	// ch4.P123()
+	// ch4.P139()
+	ch4.P145()
 
 }
