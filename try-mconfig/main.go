@@ -19,17 +19,21 @@ type RedisConfiguration struct {
 	Port int    `env:"REDIS_PORT"`
 }
 
-type Configuration struct {
+type APIConfiguration struct {
+	API MysqlConfiguration
+}
+
+type Conf struct {
 	Port  int `env:"APP_PORT"`
-	Mysql MysqlConfiguration
+	Mysql APIConfiguration
 	Redis RedisConfiguration
 }
 
 func main() {
-	configuration := Configuration{}
-	err := mconfig.Parse("conf.yml", &configuration)
+	conf := RedisConfiguration{}
+	err := mconfig.Parse("conf.yml", &conf)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(configuration)
+	fmt.Println(conf)
 }
