@@ -25,6 +25,12 @@ var tt = map[string]interface{}{
 	"r": "wwwww",
 	"s": "wewewewew",
 	"t": 3344,
+	"u": 23,
+	"v": "wwwww",
+	"w": "wewewewew",
+	"x": 3344,
+	"y": 3344,
+	"z": 3344,
 }
 
 func BenchmarkMapLen0(b *testing.B) {
@@ -57,6 +63,15 @@ func BenchmarkMapWithLen20(b *testing.B) {
 func BenchmarkMapWithLen30(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		doc := make(map[string]interface{}, 30)
+		for key, v := range tt {
+			doc[key] = v
+		}
+	}
+}
+
+func BenchmarkMapWithLen40(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		doc := make(map[string]interface{}, 40)
 		for key, v := range tt {
 			doc[key] = v
 		}
