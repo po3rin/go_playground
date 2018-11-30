@@ -25,12 +25,6 @@ var tt = map[string]interface{}{
 	"r": "wwwww",
 	"s": "wewewewew",
 	"t": 3344,
-	"u": 23,
-	"v": "wwwww",
-	"w": "wewewewew",
-	"x": 3344,
-	"y": 3344,
-	"z": 3344,
 }
 
 func BenchmarkMapLen0(b *testing.B) {
