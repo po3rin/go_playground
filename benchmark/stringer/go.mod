@@ -1,1 +1,1 @@
-module go-playground/benchmark/stringer
+module go-playground/benchmark/Builder
