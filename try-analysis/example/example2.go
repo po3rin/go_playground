@@ -1,18 +1,16 @@
 package example
 
-import "fmt"
+func helloWorld() {
+	println("Hello, World")
+}
 
-type s struct{}
-
-func (s s) Println(x string) {}
-
-func Print() {
-	fmt.Println("xxx")
+func helloGopher() {
+	println("Hello, Gopher")
 
 	{
-		fmt := s{}
-		fmt.Println("yyy")
+		helloInnerWorld := func() {
+			println("Hello, Inner World")
+		}
+		helloInnerWorld()
 	}
-
-	fmt.Println("xxx")
 }

@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"go/ast"
+	"go/importer"
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"go/types"
 	"log"
 	"os"
 )
@@ -17,6 +19,7 @@ func main() {
 	// scope()
 	// printFile()
 	write()
+	// typesCheck()
 }
 
 func parseExpr() {
@@ -115,6 +118,55 @@ func write() {
 	})
 
 	file, err := os.OpenFile("example/result.go", os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	pp := &printer.Config{Tabwidth: 8, Mode: printer.UseSpaces | printer.TabIndent}
+	pp.Fprint(file, fset, f)
+}
+
+func typesCheck() {
+	fset := token.NewFileSet()
+	f, err := parser.ParseFile(fset, "example/example2.go", nil, parser.Mode(0))
+	if err != nil {
+		log.Fatalln("Error:", err)
+	}
+
+	conf := types.Config{Importer: importer.Default()}
+
+	pkg, err := conf.Check("example", fset, []*ast.File{f}, nil)
+	if err != nil {
+		log.Fatalln("Error:", err)
+	}
+
+	scopes := map[*types.Scope]struct{}{}
+	ast.Inspect(f, func(n ast.Node) bool {
+		if ident, ok := n.(*ast.Ident); ok {
+			innerMost := pkg.Scope().Innermost(ident.Pos())
+			s, _ := innerMost.LookupParent(ident.Name, ident.Pos())
+			if s != nil {
+				fmt.Println("==========")
+				fmt.Println(s != pkg.Scope())
+				fmt.Println(ident.Name)
+				if s != pkg.Scope() && ident.Name == "helloWorld" {
+					ident = &ast.Ident{
+						Name: "heeeee",
+					}
+				}
+				scopes[s] = struct{}{}
+			}
+		}
+		return true
+	})
+
+	fmt.Println("====", len(scopes), "scopes ====")
+	for s := range scopes {
+		fmt.Println(s)
+	}
+
+	file, err := os.OpenFile("example/result2.go", os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
