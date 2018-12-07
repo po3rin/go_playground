@@ -1,2 +1,4 @@
+github.com/nsf/gocode v0.0.0-20181120081338-6cac7c69a41e h1:ihaECqr05sBOt6hJAEIHzbE2RF47BK34Z0LbQnxDiYw=
+github.com/nsf/gocode v0.0.0-20181120081338-6cac7c69a41e/go.mod h1:6Q8/OMaaKAgTX7/jt2bOXVDrm1eJhoNd+iwzghR7jvs=
 golang.org/x/tools v0.0.0-20181201035826-d0ca3933b724 h1:eV9myT/I6o1p8salzgZ0f1pz54PEgUf2NkCxEf6t+xs=
 golang.org/x/tools v0.0.0-20181201035826-d0ca3933b724/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
