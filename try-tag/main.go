@@ -5,12 +5,14 @@ import (
 	"fmt"
 
 	"github.com/creasty/defaults"
+	"github.com/pkg/errors"
 )
 
 type Str struct {
 	Name string
+	Arg  []int          `default:"[]"`
+	Map  map[string]int `default:"{}"`
 }
-
 type Sample struct {
 	SliceByJSON []int          `default:"[]"` // Supports JSON format
 	MapByJSON   map[string]int `default:"{}"`
@@ -19,12 +21,18 @@ type Sample struct {
 
 func main() {
 	obj := &Sample{}
-	if err := defaults.Set(obj); err != nil {
-		panic(err)
-	}
-	fmt.Printf("%#v\n", obj)
 
 	bytes, _ := json.Marshal(obj)
-	// want [] ...
 	fmt.Println(string(bytes))
+
+	i := SetDefault(obj)
+	bytes, _ = json.Marshal(i)
+	fmt.Println(string(bytes))
+}
+
+func SetDefault(data interface{}) interface{} {
+	if err := defaults.Set(data); err != nil {
+		fmt.Println(errors.Wrap(err, "failed to set default"))
+	}
+	return data
 }

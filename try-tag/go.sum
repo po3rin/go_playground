@@ -1,2 +1,4 @@
 github.com/creasty/defaults v1.2.1 h1:nEJEkblPW2TQiisfJtaQ2p4Y3LNXejR7DO/jTT6l2NQ=
 github.com/creasty/defaults v1.2.1/go.mod h1:CIEEvs7oIVZm30R8VxtFJs+4k201gReYyuYHJxZc68I=
+github.com/pkg/errors v0.8.0 h1:WdK/asTD0HN+q6hsWO3/vpuAkAr+tw6aNJNDFFf0+qw=
+github.com/pkg/errors v0.8.0/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
