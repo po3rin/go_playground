@@ -17,6 +17,7 @@ type Sample struct {
 	SliceByJSON []int          `default:"[]"` // Supports JSON format
 	MapByJSON   map[string]int `default:"{}"`
 	Str         *Str           `default:"{}"`
+	Responses   interface{}    `default:"[]struct{}"`
 }
 
 func main() {
