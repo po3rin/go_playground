@@ -1,0 +1,5 @@
+github.com/apache/arrow/go/arrow v0.0.0-20190110104606-fc7b414faa5c h1:TBmFr2LFM1on4p9sVQHRWYadl8b8M2/R4vHqL9irgiw=
+github.com/apache/arrow/go/arrow v0.0.0-20190110104606-fc7b414faa5c/go.mod h1:GjvccvtI06FGFvRU1In/maF7tKp3h7GBV9Sexo5rNPM=
+github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/stretchr/testify v1.2.0/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
