@@ -1,0 +1,48 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: try go + open API
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080/api/
+paths:
+  /employee:
+    get:
+      summary: get employee information
+      operationId: getEmployee
+      tags:
+        - employee
+      parameters:
+        - name: employeeId
+          in: query
+          description: query target employee id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: return employee information
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+components:
+  schemas:
+    Employee:
+      required:
+        - id
+        - firstName
+        - lastName
+        - salary
+      properties:
+        id:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        salary:
+          type: integer
+          format: int64
+
