@@ -14,7 +14,6 @@ import (
 )
 
 type PostProperties struct {
-
 	Id int32 `json:"id"`
 
 	Title string `json:"title"`

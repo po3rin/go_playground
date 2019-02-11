@@ -13,44 +13,51 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	l "github.com/po3rin/go-playground/try-go-openapi/server/logger"
 )
 
-// CreateComment - 
+// CreateComment -
 func CreateComment(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// CreatePost - 
+// CreatePost -
 func CreatePost(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{})
+	var p Post
+	err := c.BindJSON(&p)
+	if err != nil {
+		l.Error(err.Error())
+		c.JSON(http.StatusInternalServerError, err.Error())
+	}
+	c.JSON(http.StatusOK, p)
 }
 
-// DeleteComment - 
+// DeleteComment -
 func DeleteComment(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// DeletePost - 
+// DeletePost -
 func DeletePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// GetComments - 
+// GetComments -
 func GetComments(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// GetPost - 
+// GetPost -
 func GetPost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// GetPosts - 
+// GetPosts -
 func GetPosts(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-// UpdatePost - 
+// UpdatePost -
 func UpdatePost(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
