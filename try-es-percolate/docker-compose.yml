@@ -1,0 +1,61 @@
+version: '3.6'
+services:
+  elasticsearch:
+    build: ./elasticsearch
+    container_name: elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.name=es01
+      - cluster.name=go_elastic_starter_cluster
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+    volumes:
+    # - esdata01:/usr/share/elasticsearch/data
+    - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+
+  elasticsearch2:
+    build: ./elasticsearch
+    container_name: elasticsearch2
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.name=es02
+      - cluster.name=go_elastic_starter_cluster
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    volumes:
+    # - esdata02:/usr/share/elasticsearch/data
+    - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+
+  elasticsearch3:
+    build: ./elasticsearch
+    container_name: elasticsearch3
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.name=es03
+      - cluster.name=go_elastic_starter_cluster
+      - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    volumes:
+    # - esdata03:/usr/share/elasticsearch/data
+    - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
+
+  kibana:
+    build: ./kibana
+    links:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+
+  api:
+    build: ./
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./:/api_server
+    links:
+      - kibana
+    command: bash wait-for-logstash.sh

@@ -107,6 +107,7 @@ func TestCreatePost(t *testing.T) {
 			if err != nil {
 				t.Fatalf("unexpected error : %v", err)
 			}
+			t.Log(string(data))
 			responseValidationInput.SetBodyBytes(data)
 		}
 		if err := openapi3filter.ValidateResponse(ctx, responseValidationInput); err != nil {

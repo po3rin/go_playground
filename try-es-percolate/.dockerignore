@@ -1,0 +1,4 @@
+elasticsearch/
+kibana/
+docker-compose.yml
+Makefile
