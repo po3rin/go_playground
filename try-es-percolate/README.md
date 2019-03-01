@@ -1,6 +1,13 @@
 # try Elasticsearch percolate
 
-```go
+```
+GET _cat/indices?v
+GET testindex?pretty
+GET testindex/_mapping?pretty
+GET /testindex/_search
+
+DELETE /testindex
+
 PUT /testindex
 {
     "mappings": {
@@ -15,20 +22,11 @@ PUT /testindex
             "properties": {
                 "query": {
                     "type": "percolator"
+                },
+                "user_id": {
+                    "type": "keyword"
                 }
             }
-        }
-    }
-}
-
-GET testindex?pretty
-GET testindex/_mapping?pretty
-
-PUT testindex/queries/1?refresh
-{
-    "query" : {
-        "match" : {
-            "title" : "bonsai tree"
         }
     }
 }
@@ -39,7 +37,8 @@ PUT testindex/queries/1?refresh
         "match" : {
             "title" : "golang"
         }
-    }
+    },
+    "user_id" : "po3rin"
 }
 
 PUT testindex/queries/2?refresh
@@ -48,28 +47,24 @@ PUT testindex/queries/2?refresh
         "match" : {
             "title" : "elasticsearch"
         }
-    }
+    },
+    "user_id" : "po3rin"
 }
 
-GET /testindex/_search
+PUT testindex/queries/3?refresh
 {
     "query" : {
-        "percolate" : {
-            "field" : "query",
-            "document_type" : "articles",
-            "document" : {
-                "title" : "A new bonsai tree in the office"
-            }
+        "match" : {
+            "title" : "python"
         }
-    }
+    },
+    "user_id" : "po4rin"
 }
 
-PUT /testindex/title/1
+PUT /testindex/articles/1
 {
     "title" : "develop app using golang and elasticsearch"
 }
-
-GET /testindex/_search
 
 GET /testindex/_search
 {
@@ -78,65 +73,29 @@ GET /testindex/_search
             "field": "query",
             "document_type" : "articles",
             "index" : "testindex",
-            "type" : "title",
+            "type" : "articles",
             "id" : "1"
-        }
-    }
-}
-
-PUT /testindex/queries/1?refresh
-{
-    "query" : {
-        "match" : {
-            "title" : "brown fox"
-        }
-    }
-}
-
-PUT /testindex/queries/2?refresh
-{
-    "query" : {
-        "match" : {
-            "title" : "lazy dog"
         }
     }
 }
 
 GET testindex/_search
 {
-    "query" : {
-        "percolate" : {
-            "field": "query",
-            "document_type" : "articles",
-            "document" : {
-                "title" : "The quick brown fox jumps over the lazy dog"
-            }
-        }
-    },
-    "highlight": {
-      "fields": {
-        "title": {}
-      }
-    }
-}
-
-PUT /testindex/title/1
-{
-  "title" : "The quick brown fox jumps over the lazy dog"
-}
-
-GET /testindex/_search
-{
-    "query" : {
-        "percolate" : {
-            "field": "query",
+  "query": {
+    "bool": {
+      "filter": [
+        {
+          "percolate" : {
+            "field" : "query",
             "document_type" : "articles",
             "index" : "testindex",
-            "type" : "title",
+            "type" : "articles",
             "id" : "1"
-        }
+          }
+        },
+        { "term": { "user_id": "po3rin" } }
+      ]
     }
+  }
 }
-
-DELETE /testindex
 ```

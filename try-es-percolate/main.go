@@ -25,19 +25,27 @@ func main() {
 
 		id := c.Param("id")
 		percolateClient := elastic.NewPercolatorQuery()
-		query := percolateClient.Field("query").
+		percolateQuery := percolateClient.Field("query").
 			DocumentType("articles").
-			IndexedDocumentType("title").
+			IndexedDocumentType("articles").
 			IndexedDocumentIndex("testindex").
 			IndexedDocumentId(id)
 
+		termQuery := elastic.NewTermQuery("user_id", "po3rin")
+
+		boolQuery := elastic.NewBoolQuery().
+			Filter(percolateQuery, termQuery)
+
 		result, err := client.Search().
 			Index("testindex").
-			Query(query).
+			Query(boolQuery).
 			Do(c.Request.Context())
+
 		if err != nil {
+			src, _ := boolQuery.Source()
 			c.JSON(500, gin.H{
 				"fase":    "search to elasticsearch",
+				"query":   src,
 				"message": err.Error(),
 			})
 			return
