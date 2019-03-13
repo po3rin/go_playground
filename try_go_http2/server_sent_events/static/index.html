@@ -1,0 +1,12 @@
+<html>
+<body>
+    <h1>count: <span id="cnt">0</span></h1>
+    <script>
+    const ev = new EventSource('/num')
+    ev.addEventListener('message', (e) => {
+        cnt.textContent = e.data
+    })
+    </script>
+</body>
+</html>
+
