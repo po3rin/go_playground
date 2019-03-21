@@ -1,73 +1,71 @@
 package map_test // import "make_map"
 
 import (
+	"log"
+	"strings"
 	"testing"
+
+	"github.com/pkg/errors"
 )
 
-var tt = map[string]interface{}{
-	"a": 23,
-	"b": "wwwww",
-	"c": "wewewewew",
-	"d": 3344,
-	"e": 23,
-	"f": "wwwww",
-	"g": "wewewewew",
-	"h": 3344,
-	"i": 23,
-	"j": "wwwww",
-	"k": "wewewewew",
-	"l": 3344,
-	"m": 23,
-	"n": "wwwww",
-	"o": "wewewewew",
-	"p": 3344,
-	"q": 23,
-	"r": "wwwww",
-	"s": "wewewewew",
-	"t": 3344,
+var sl = []string{
+	"a=a",
+	"b=a",
+	"c=a",
+	"d=a",
+	"e=a",
+	"f=a",
+	"g=a",
+	"h=a",
+	"i=a",
+	"j=a",
+	"l=a",
+	"m=a",
+	"n=a",
+	"o=a",
+	"p=a",
+	"q=a",
+	"r=a",
 }
 
-func BenchmarkMapLen0(b *testing.B) {
+func AttrMapWithoutCaps(sl []string) (map[string]string, error) {
+	m := map[string]string{}
+	for _, v := range sl {
+		parts := strings.SplitN(v, "=", 2)
+		if len(parts) != 2 {
+			return nil, errors.Errorf("invalid value %s", v)
+		}
+		m[parts[0]] = parts[1]
+	}
+	return m, nil
+}
+
+func AttrMapWithCaps(sl []string) (map[string]string, error) {
+	m := make(map[string]string, len(sl))
+	for _, v := range sl {
+		parts := strings.SplitN(v, "=", 2)
+		if len(parts) != 2 {
+			return nil, errors.Errorf("invalid value %s", v)
+		}
+		m[parts[0]] = parts[1]
+	}
+	return m, nil
+}
+
+func BenchmarkAttrMapWithoutCaps(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		doc := make(map[string]interface{})
-		for key, v := range tt {
-			doc[key] = v
+		_, err := AttrMapWithoutCaps(sl)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 }
 
-func BenchmarkMapWithLen10(b *testing.B) {
+func BenchmarkAttrMapWithCaps(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		doc := make(map[string]interface{}, 10)
-		for key, v := range tt {
-			doc[key] = v
-		}
-	}
-}
-
-func BenchmarkMapWithLen20(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		doc := make(map[string]interface{}, 20)
-		for key, v := range tt {
-			doc[key] = v
-		}
-	}
-}
-
-func BenchmarkMapWithLen30(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		doc := make(map[string]interface{}, 30)
-		for key, v := range tt {
-			doc[key] = v
-		}
-	}
-}
-
-func BenchmarkMapWithLen40(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		doc := make(map[string]interface{}, 40)
-		for key, v := range tt {
-			doc[key] = v
+		_, err := AttrMapWithCaps(sl)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 }

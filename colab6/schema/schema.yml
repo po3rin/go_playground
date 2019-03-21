@@ -1,0 +1,46 @@
+openapi: 3.0.2
+info:
+  title: userapi
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: development
+paths:
+  /users:
+    get:
+      description: Userをすべて取得する
+      operationId: getUsers
+      responses:
+        '200':
+          $ref: '#/components/responses/Users'
+components:
+  schemas:
+    Users:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserProperties'
+      required:
+        - users
+    UserProperties:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: po3rin
+      required:
+        - id
+        - name
+
+  responses:
+    Users:
+      description: Userの配列
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Users'
