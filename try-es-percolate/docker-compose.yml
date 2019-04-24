@@ -1,6 +1,6 @@
 version: '3.6'
 services:
-  elasticsearch:
+  try-elasticsearch:
     build: ./elasticsearch
     container_name: elasticsearch
     environment:
@@ -15,7 +15,7 @@ services:
     - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
 
-  elasticsearch2:
+  try-elasticsearch2:
     build: ./elasticsearch
     container_name: elasticsearch2
     environment:
@@ -28,7 +28,7 @@ services:
     - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties
 
-  elasticsearch3:
+  try-elasticsearch3:
     build: ./elasticsearch
     container_name: elasticsearch3
     environment:
@@ -44,7 +44,7 @@ services:
   kibana:
     build: ./kibana
     links:
-      - elasticsearch
+      - try-elasticsearch
     environment:
       # elasticsearch.username: elastic
       # elasticsearch.password: changeme
@@ -60,5 +60,5 @@ services:
       - ./:/api_server
     links:
       - kibana
-      - elasticsearch
+      - try-elasticsearch
     command: bash wait-for-logstash.sh
