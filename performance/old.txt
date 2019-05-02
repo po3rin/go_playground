@@ -1,0 +1,24 @@
+goos: darwin
+goarch: amd64
+pkg: github.com/po3rin/performance
+BenchmarkFib20-12    	   50000	     35654 ns/op
+BenchmarkFib20-12    	   50000	     35904 ns/op
+BenchmarkFib20-12    	   50000	     35718 ns/op
+BenchmarkFib20-12    	   50000	     35695 ns/op
+BenchmarkFib20-12    	   50000	     35753 ns/op
+BenchmarkFib20-12    	   50000	     35681 ns/op
+BenchmarkFib20-12    	   50000	     35959 ns/op
+BenchmarkFib20-12    	   50000	     35911 ns/op
+BenchmarkFib20-12    	   50000	     36054 ns/op
+BenchmarkFib20-12    	   50000	     35778 ns/op
+BenchmarkFib1-12     	2000000000	         1.53 ns/op
+BenchmarkFib1-12     	2000000000	         1.52 ns/op
+BenchmarkFib1-12     	2000000000	         1.54 ns/op
+BenchmarkFib1-12     	2000000000	         1.58 ns/op
+BenchmarkFib1-12     	2000000000	         1.57 ns/op
+BenchmarkFib1-12     	2000000000	         1.56 ns/op
+BenchmarkFib1-12     	2000000000	         1.55 ns/op
+BenchmarkFib1-12     	2000000000	         1.55 ns/op
+BenchmarkFib1-12     	2000000000	         1.53 ns/op
+BenchmarkFib1-12     	2000000000	         1.54 ns/op
+PASS
