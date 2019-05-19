@@ -9,7 +9,8 @@ import (
 func main() {
 	err := Bar()
 	err = errors.Wrap(err, "oh noes")
-	fmt.Printf("%+v\n", err)
+	msg := fmt.Sprintf("%+v\n", err)
+	fmt.Println(msg)
 
 	// output ----------------------
 	// whoops
