@@ -41,15 +41,32 @@ func Field(key string, val interface{}) func(*CustomErr) {
 }
 
 func GetFields(err error) map[string]interface{} {
-	type customError interface {
+	type fieldsGetter interface {
 		GetFields() map[string]interface{}
 	}
-	err = errors.Cause(err)
-	customErr, ok := err.(customError)
-	if !ok {
-		return nil
+
+	type causer interface {
+		Cause() error
 	}
-	return customErr.GetFields()
+
+	fieldsMap := make(map[string]interface{})
+	for err != nil {
+		cause, ok := err.(causer)
+		if !ok {
+			break
+		}
+		err = cause.Cause()
+		customErr, ok := err.(fieldsGetter)
+		if !ok {
+			continue
+		}
+		filelds := customErr.GetFields()
+		for k, v := range filelds {
+			fieldsMap[k] = v
+		}
+	}
+
+	return fieldsMap
 }
 
 func main() {
