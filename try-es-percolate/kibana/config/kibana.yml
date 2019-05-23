@@ -1,0 +1,2 @@
+#elasticsearch.requestTimeout: 30000
+elasticsearch.requestTimeout:  60000

@@ -1,0 +1,1 @@
+doc['end'].date.getMillis()/1000 - doc['start'].date.getMillis()/1000)
