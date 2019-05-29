@@ -21,7 +21,7 @@ func TestResize(t *testing.T) {
 		{
 			name:           "x1.0",
 			imgFilename:    "testdata/gopher.jpeg",
-			goldenFilename: "testdata/resize_golden_1.jpg",
+			goldenFilename: "testdata/resize_golden_1.jpeg",
 		},
 	}
 
