@@ -16,15 +16,11 @@ func TestResize(t *testing.T) {
 	tests := []struct {
 		name           string
 		imgFilename    string
-		xRatio         float64
-		yRatio         float64
 		goldenFilename string
 	}{
 		{
-			name:           "x0.5",
+			name:           "x1.0",
 			imgFilename:    "testdata/gopher.jpeg",
-			xRatio:         0.5,
-			yRatio:         0.5,
 			goldenFilename: "testdata/resize_golden_1.jpg",
 		},
 	}
@@ -40,8 +36,9 @@ func TestResize(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to decode file\nerr: %v", err)
 			}
+
+			// any image processing ...
 			got := img
-			// got := resize.Resize(img, tt.xRatio, tt.yRatio)
 
 			if *genGoldenFiles {
 				goldenFile, err := os.Create(tt.goldenFilename)
@@ -50,7 +47,6 @@ func TestResize(t *testing.T) {
 				}
 				defer goldenFile.Close()
 				err = jpeg.Encode(goldenFile, got, &jpeg.Options{Quality: 100})
-				// err = jpeg.Encode(goldenFile, got, nil)
 				if err != nil {
 					t.Errorf("failed to encode file\nerr: %v", err)
 				}
