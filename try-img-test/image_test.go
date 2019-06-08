@@ -66,21 +66,21 @@ func TestResizeJPEG(t *testing.T) {
 				t.Fatalf("failed to decode file\nerr: %v", err)
 			}
 
-			// compare RGBA.
-			if !reflect.DeepEqual(convertRGBA(got), convertRGBA(want)) {
-				t.Errorf("actual image differs from golden image")
-				return
-			}
-
-			// b := want.Bounds()
-			// for y := b.Min.Y; y < b.Max.Y; y++ {
-			// 	for x := b.Min.X; x < b.Max.X; x++ {
-			// 		if !eq(convertRGBA(got).At(x, y), convertRGBA(want).At(x, y)) {
-			// 			t.Errorf("unexpected color in [%v,%v]\ngot: %v\nwant:%v\n", x, y, convertRGBA(got).At(x, y), convertRGBA(want).At(x, y))
-			// 			return
-			// 		}
-			// 	}
+			// // compare RGBA.
+			// if !reflect.DeepEqual(convertRGBA(got), convertRGBA(want)) {
+			// 	t.Errorf("actual image differs from golden image")
+			// 	return
 			// }
+
+			b := want.Bounds()
+			for y := b.Min.Y; y < b.Max.Y; y++ {
+				for x := b.Min.X; x < b.Max.X; x++ {
+					if !eq(convertRGBA(got).At(x, y), convertRGBA(want).At(x, y)) {
+						t.Errorf("unexpected color in [%v,%v]\ngot: %v\nwant:%v\n", x, y, convertRGBA(got).At(x, y), convertRGBA(want).At(x, y))
+						return
+					}
+				}
+			}
 		})
 	}
 }
