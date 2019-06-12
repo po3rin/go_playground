@@ -1,6 +1,7 @@
 package image_test
 
 import (
+	"bytes"
 	"flag"
 	"image"
 	"image/color"
@@ -198,6 +199,16 @@ func RGBAImageEqual(a, b *image.RGBA) bool {
 	return true
 }
 
+func checkBoundsAndPix(b1, b2 image.Rectangle, pix1, pix2 []uint8) bool {
+	if !b1.Eq(b2) {
+		return false
+	}
+	if !bytes.Equal(pix1, pix2) {
+		return false
+	}
+	return true
+}
+
 func BenchmarkEqNormal(b *testing.B) {
 	f, err := os.Open("./testdata/gopher.jpeg")
 	if err != nil {
@@ -208,6 +219,7 @@ func BenchmarkEqNormal(b *testing.B) {
 	if err != nil {
 		b.Fatalf("failed to decode file\nerr: %v", err)
 	}
+
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		for y := 0; y < img.Bounds().Dy(); y++ {
@@ -235,6 +247,26 @@ func BenchmarkEqWithStride(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		rgba := convertRGBA(img)
 		if !RGBAImageEqual(rgba, rgba) {
+			b.Fatalf("failed to decode file\nerr: %v", err)
+		}
+	}
+}
+
+func BenchmarkEqWithBytes(b *testing.B) {
+	f, err := os.Open("./testdata/gopher.jpeg")
+	if err != nil {
+		b.Fatalf("failed to open file\nerr: %v", err)
+	}
+	defer f.Close()
+	img, _, err := image.Decode(f)
+	if err != nil {
+		b.Fatalf("failed to decode file\nerr: %v", err)
+	}
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		rgba := convertRGBA(img)
+		if !checkBoundsAndPix(rgba.Bounds(), rgba.Bounds(), rgba.Pix, rgba.Pix) {
 			b.Fatalf("failed to decode file\nerr: %v", err)
 		}
 	}
