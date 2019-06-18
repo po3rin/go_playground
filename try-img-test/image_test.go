@@ -199,12 +199,13 @@ func RGBAImageEqual(a, b *image.RGBA) bool {
 	return true
 }
 
-func checkBoundsAndPix(b1, b2 image.Rectangle, pix1, pix2 []uint8) bool {
+func checkBoundsAndPix(tb testing.TB, b1, b2 image.Rectangle, pix1, pix2 []uint8) bool {
+	tb.Helper()
 	if !b1.Eq(b2) {
-		return false
+		tb.Errorf("got unexpected result")
 	}
 	if !bytes.Equal(pix1, pix2) {
-		return false
+		tb.Errorf("got unexpected result")
 	}
 	return true
 }
@@ -266,7 +267,7 @@ func BenchmarkEqWithBytes(b *testing.B) {
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
 		rgba := convertRGBA(img)
-		if !checkBoundsAndPix(rgba.Bounds(), rgba.Bounds(), rgba.Pix, rgba.Pix) {
+		if !checkBoundsAndPix(b, rgba.Bounds(), rgba.Bounds(), rgba.Pix, rgba.Pix) {
 			b.Fatalf("failed to decode file\nerr: %v", err)
 		}
 	}
