@@ -8,7 +8,7 @@ Go で 行列を扱う際には gonum パッケージが鉄板でしょう。gon
 
 <a href="https://github.com/gonum/gonum"><img src="src/gonum.png" width="460px"></a>
 
-## 行列の作成
+## 行列の基本
 
 まずは行列の作り方から
 
@@ -30,7 +30,64 @@ func main() {
 }
 ```
 
-速攻ですね。これで 3×4 の行列の完成です。行列をデバッグのために綺麗に標準出力できるようにしましょう。
+NewDense は *Dense を生成します。
+
+```go
+type Dense struct {
+	mat blas64.General
+
+	capRows, capCols int
+}
+```
+
+Dense の構造は NewDence の中身を見れば分かりやすいです。内部では単純に[]float64のデータや行数、列数、ストライドを保持しているだけです。
+
+```go
+func NewDense(r, c int, data []float64) *Dense {
+	if r < 0 || c < 0 {
+		panic("mat: negative dimension")
+	}
+	if data != nil && r*c != len(data) {
+		panic(ErrShape)
+    }
+    // nil なら 0 で初期化される
+	if data == nil {
+		data = make([]float64, r*c)
+	}
+	return &Dense{
+		mat: blas64.General{
+			Rows:   r,
+			Cols:   c,
+			Stride: c,
+			Data:   data,
+		},
+		capRows: r,
+		capCols: c,
+	}
+}
+```
+
+*Dense が Matrix インターフェースを実装しています。実装の中では基本的にこの Matrix 型で引き渡していくと便利です。
+
+```go
+// Matrix is the basic matrix interface type.
+type Matrix interface {
+	// Dims returns the dimensions of a Matrix.
+	Dims() (r, c int)
+
+	// At returns the value of a matrix element at row i, column j.
+	// It will panic if i or j are out of bounds for the matrix.
+	At(i, j int) float64
+
+	// T returns the transpose of the Matrix. Whether T returns a copy of the
+	// underlying data is implementation dependent.
+	// This method may be implemented using the Transpose type, which
+	// provides an implicit matrix transpose.
+	T() Matrix
+}
+```
+
+また、行列のデバッグのために整形して標準出力できるようにしておくと便利です。
 
 ```go
 func matPrint(X mat.Matrix) {
@@ -46,30 +103,25 @@ func main() {
 	x := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
     A := mat.NewDense(3, 4, x)
     matPrint(A)
+    // ⎡1   2   3   4⎤
+    // ⎢5   6   7   8⎥
+    // ⎣9  10  11  12⎦
 }
 ```
 
-実行してみましょう。
-
-```bash
-$ go run main.go
-⎡1   2   3   4⎤
-⎢5   6   7   8⎥
-⎣9  10  11  12⎦
-```
-
-良いですね。ちなみに全要素0で初期化したい場合は第３引数に```nil```を与えます。
+NewDense の内部実装をみた通り、全要素0で初期化したい場合は第３引数に```nil```を与えます。
 
 ```go
 func main() {
     A := mat.NewDense(3, 4, nil)
+    matPrint(A)
     // ⎡0  0  0  0⎤
     // ⎢0  0  0  0⎥
     // ⎣0  0  0  0⎦
 }
 ```
 
-以降 A を作るコードは省略します。
+以降 A を作るコードは基本的に省略します。
 
 ## 要素の変更 or 取得
 
@@ -80,20 +132,15 @@ func main() {
     // 行列作成は省略
 
     a := A.At(0, 2)
-	println("A[0, 2]: ", a)
+    println("A[0, 2]: ", a)
+    // A[0, 2]:  +3.000000e+000
+
 	A.Set(0, 2, -1.5)
-	matPrint(A)
+    matPrint(A)
+    // ⎡1   2  -1.5   4⎤
+    // ⎢5   6     7   8⎥
+    // ⎣9  10    11  12⎦
 }
-```
-
-実行するとうまく動いています。
-
-```bash
-$ go run main.go
-A[0, 2]:  +3.000000e+000
-⎡1   2  -1.5   4⎤
-⎢5   6     7   8⎥
-⎣9  10    11  12⎦
 ```
 
 ## 行だけ列だけを Vector として取り出す
@@ -114,27 +161,17 @@ RowView と ColView の Example です。
 func main() {
     // 行列作成は省略
 
-    println("Row 1 of A:")
-	matPrint(A.RowView(1))
+    matPrint(A.RowView(1))
+    // ⎡5⎤
+    // ⎢6⎥
+    // ⎢7⎥
+    // ⎣8⎦
 
-	println("Column 0 of A:")
     matPrint(A.ColView(0))
+    // ⎡1⎤
+    // ⎢5⎥
+    // ⎣9⎦
 }
-```
-
-実行すると確かに狙ったベクトルを取得できています。
-
-```bash
-$ go run main.go
-Row 1 of A:
-⎡5⎤
-⎢6⎥
-⎢7⎥
-⎣8⎦
-Column 0 of A:
-⎡1⎤
-⎢5⎥
-⎣9⎦
 ```
 
 ## 指定した行や列を変更する
@@ -147,60 +184,42 @@ func main() {
 
 	row := []float64{10, 9, 8, 7}
     A.SetRow(0, row)
-    println("Updated A:")
-	matPrint(A)
+    matPrint(A)
+    // ⎡10   9   8   7⎤
+    // ⎢ 5   6   7   8⎥
+    // ⎣ 9  10  11  12⎦
 
 	col := []float64{3, 2, 1}
     A.SetCol(0, col)
-    println("Updated A:")
     matPrint(A)
+    // ⎡3   9   8   7⎤
+    // ⎢2   6   7   8⎥
+    // ⎣1  10  11  12⎦
 }
-```
-
-```bash
-$ go run main.go
-Updated A:
-⎡10   9   8   7⎤
-⎢ 5   6   7   8⎥
-⎣ 9  10  11  12⎦
-Updated A:
-⎡3   9   8   7⎤
-⎢2   6   7   8⎥
-⎣1  10  11  12⎦
 ```
 
 ## 要素同しの足し引き
 
-ここは少し直感的ではないですが空の行列を作ってそこに計算結果を格納するという方法をとります。ゼロ値で初期化した mat.Dence に対して計算結果を込めます。
+ここは少し直感的ではないですが空の行列を作ってそこに計算結果を格納するという方法をとります。ゼロ値で初期化した mat.Dence に対して計算結果を込めます。計算結果を格納する先の行列のサイズが計算結果と合わないとpanicするので注意してください。
 
 ```go
 func main() {
     // 行列作成は省略
 
-    var B mat.Dense
+    B := mat.NewDense(3, 4, nil)
 	B.Add(A, A)
-	println("A + A:")
-	matPrint(&B)
+    matPrint(&B)
+    // ⎡ 2   4   6   8⎤
+    // ⎢10  12  14  16⎥
+    // ⎣18  20  22  24⎦
 
-	var C mat.Dense
+	C := mat.NewDense(3, 4, nil)
 	C.Sub(A, A)
-	println("A - A:")
-	matPrint(&C)
+    matPrint(&C)
+    // ⎡0  0  0  0⎤
+    // ⎢0  0  0  0⎥
+    // ⎣0  0  0  0⎦
 }
-```
-
-実行すると要素ごとの足し引きができています。
-
-```bash
-$ go run main.go
-A + A:
-⎡ 2   4   6   8⎤
-⎢10  12  14  16⎥
-⎣18  20  22  24⎦
-A - A:
-⎡0  0  0  0⎤
-⎢0  0  0  0⎥
-⎣0  0  0  0⎦
 ```
 
 毎回ゼロ値で初期化した mat.Dence を準備するのも面倒です。計算前の行列がいらないなら下記のようにも書けます。
@@ -210,12 +229,9 @@ func main() {
     // 行列作成は省略
 
     A.Add(A, A)
-	println("A + A:")
 	matPrint(A)
 
-	// var C mat.Dense
 	A.Sub(A, A)
-	println("A - A:")
 	matPrint(A)
 }
 ```
@@ -224,6 +240,7 @@ func main() {
 
 ```go
 func Add(a mat.Matrix, b mat.Matrix) mat.Matrix {
+    // TODO got matrix size from args.
 	var B mat.Dense
 	B.Add(a, b)
 	return &B
@@ -238,21 +255,13 @@ func Add(a mat.Matrix, b mat.Matrix) mat.Matrix {
 func main() {
     // 行列作成は省略
 
-    var C mat.Dense
+    C = mat.NewDense(3, 4, nil)
 	C.Scale(2, A)
-	println("2 * A:")
-	matPrint(&C)
+    matPrint(&C)
+    // ⎡ 2   4   6   8⎤
+    // ⎢10  12  14  16⎥
+    // ⎣18  20  22  24⎦
 }
-```
-
-こうなります。
-
-```bash
-$ go run main.go
-2 * A:
-⎡ 2   4   6   8⎤
-⎢10  12  14  16⎥
-⎣18  20  22  24⎦
 ```
 
 ## 転置行列
@@ -264,42 +273,95 @@ func main() {
     // 行列作成は省略
 
     B := A.T()
-	matPrint(B)
+    matPrint(B)
+    // ⎡1  5   9⎤
+    // ⎢2  6  10⎥
+    // ⎢3  7  11⎥
+    // ⎣4  8  12⎦
 }
 ```
 
-行列が転置しています。
+## 逆行列
 
-```bash
-$ go run main.go
-⎡1  5   9⎤
-⎢2  6  10⎥
-⎢3  7  11⎥
-⎣4  8  12⎦
+逆行列は Inverse メソッドです。
+
+```go
+func main() {
+    A = mat.NewDense(2, 2, []float64{3, 5, 1, 2})
+    // ⎡3  5⎤
+    // ⎣1  2⎦
+
+    B = mat.NewDense(2, 2, nil)
+    err := B.Inverse(A)
+    if err != nil {
+        log.Fatal("failed to create inverse matrix")
+    }
+    matPrint(&B)
+    // ⎡  1.999999999999999  -4.999999999999997⎤
+    // ⎣-0.9999999999999996  2.9999999999999987⎦
+}
 ```
 
-## 行列の積
+概ね正しく計算できていますが、精度を要求されると厳しいかもしれません。
 
-行列の積はProductメソッドで行ます。
+## 行列の内積
+
+行列の内積はProductメソッドで行ます。(英語で内積は inner product )
 
 ```go
 func main() {
     // 行列作成は省略
 
-    var C mat.Dense
+    C = mat.NewDense(3, 3, nil)
     C.Product(A, A.T())
-    println("A * A: ")
-	matPrint(&C)
+    matPrint(&C)
+    // ⎡ 30   70  110⎤
+    // ⎢ 70  174  278⎥
+    // ⎣110  278  446⎦
 }
-```
-
-```bash
-$ go run main,.go
-A * A:
-⎡ 30   70  110⎤
-⎢ 70  174  278⎥
-⎣110  278  446⎦
 ```
 
 当然、掛け合わせる行数と列数が同じではなければいけません。dimension mismatch というパニックがおきますので注意してください。
 
+## 行列のスライシング
+
+スライシングは行列から指定の箇所を行列として抽出する操作です。
+
+```go
+func main() {
+    // 行列作成は省略
+
+    S := A.Slice(0, 3, 0, 3)
+    matPrint(S)
+    // ⎡1   2   3⎤
+    // ⎢5   6   7⎥
+    // ⎣9  10  11⎦
+}
+```
+
+3 * 4 の行列から指定した部分だけを抽出しています。
+
+## 各要素に任意の操作を実行する
+
+Applyを使います。第一引数にやりたい操作の関数を渡してあげるだけです。今回は例として要素の値に行番号、列番号を足す処理を定義しています。
+
+```go
+func main() {
+    // 行列作成は省略
+
+    // 要素ごとに適用する関数
+    sumOfIndices := func(i, j int, v float64) float64 {
+		return float64(i+j) + v
+    }
+
+	var B mat.Dense
+	B.Apply(sumOfIndices, A)
+    matPrint(&B)
+    // ⎡ 1   3   5   7⎤
+    // ⎢ 6   8  10  12⎥
+    // ⎣11  13  15  17⎦
+```
+
+## まとめ
+
+これで一通りの処理はできるはずです。また気が向いたら更新していきます。Go で行列計算やっていきましょう！

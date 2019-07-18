@@ -69,6 +69,25 @@ func main() {
 	A := mat.NewDense(3, 4, x)
 	matPrint(A)
 
+	sumOfIndices := func(i, j int, v float64) float64 {
+		return float64(i+j) + v
+	}
+	var Ap mat.Dense
+	Ap.Apply(sumOfIndices, A)
+	println("apply")
+	matPrint(&Ap)
+
+	E := A.Slice(0, 3, 0, 3)
+	matPrint(E)
+	de := mat.Det(E)
+	println("det(E): ", de)
+
+	var B mat.Dense
+	A = mat.NewDense(2, 2, []float64{3, 5, 1, 2})
+	_ = B.Inverse(A)
+	println("A-1:")
+	matPrint(&B)
+
 	D := Add(A, A)
 	matPrint(D)
 
