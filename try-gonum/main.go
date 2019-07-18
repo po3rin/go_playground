@@ -67,17 +67,64 @@ func main() {
 	// }
 	x := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 	A := mat.NewDense(3, 4, x)
-	println("A:")
 	matPrint(A)
 
+	D := Add(A, A)
+	matPrint(D)
+
+	// // var B mat.Dense
+	// A.Add(A, A)
+	// println("A + A:")
+	// matPrint(A)
+
+	// // var C mat.Dense
+	// A.Sub(A, A)
+	// println("A - A:")
+	// matPrint(A)
+
+	// println("Row 1 of A:")
+	// matPrint(A.RowView(1))
+
+	// println("Column 0 of A:")
+	// matPrint(A.ColView(0))
+
+	// row := []float64{10, 9, 8, 7}
+	// A.SetRow(0, row)
+	// println("Updated A:")
+	// matPrint(A)
+
+	// col := []float64{3, 2, 1}
+	// A.SetCol(0, col)
+	// println("Updated A:")
+	// matPrint(A)
+
 	// Setting and getting are pretty simple
-	a := A.At(0, 2)
-	println("A[0, 2]: ", a)
-	A.Set(0, 2, -1.5)
-	matPrint(A)
+	// a := A.At(0, 2)
+	// println("A[0, 2]: ", a)
+	// A.Set(0, 2, -1.5)
+	// matPrint(A)
+
+	// var C mat.Dense
+	// C.Scale(2, A)
+	// println("2 * A:")
+	// matPrint(&C)
+
+	// B := A.T()
+	// matPrint(B)
+
+	var C mat.Dense
+	C.Product(A, A.T())
+	println("A * A: ")
+	matPrint(&C)
 }
 
 func matPrint(X mat.Matrix) {
 	fa := mat.Formatted(X, mat.Prefix(""), mat.Squeeze())
 	fmt.Printf("%v\n", fa)
+}
+
+func Add(a mat.Matrix, b mat.Matrix) mat.Matrix {
+	var B mat.Dense
+	B.Add(a, b)
+	return &B
 }
