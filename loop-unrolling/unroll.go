@@ -75,3 +75,25 @@ func ContainsUint64Unroll8(ids []uint64, id uint64) bool {
 	}
 	return false
 }
+
+func ContainsUint64Unroll8WithBoundsCheck(ids []uint64, id uint64) bool {
+	var i int
+	for ; i < len(ids); i += 8 {
+		if ids[i] == id ||
+			ids[i+1] == id ||
+			ids[i+2] == id ||
+			ids[i+3] == id ||
+			ids[i+4] == id ||
+			ids[i+5] == id ||
+			ids[i+6] == id ||
+			ids[i+7] == id {
+			return true
+		}
+	}
+	for ; i < len(ids); i++ {
+		if ids[i] == id {
+			return true
+		}
+	}
+	return false
+}
