@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-playground/concurrency_in_go/ch5"
+	"go-playground/concurrency_in_go/ch3"
 	"sync"
 )
 
@@ -43,7 +43,7 @@ func main() {
 	// ch3.P59()
 	// ch3.P60()
 	// ch3.P69()
-	// ch3.P74()
+	ch3.P74()
 	// ch3.P78()
 
 	// ch4.P89()
@@ -62,5 +62,5 @@ func main() {
 	// ch5.P153()
 	// ch5.P165()
 	// ch5.P167()
-	ch5.P183()
+	// ch5.P183()
 }
