@@ -5,12 +5,12 @@ import (
 	"sync"
 )
 
-var lock = sync.Mutex{}
+var m = sync.Mutex{}
 var store = map[string]string{}
 
 func compareAndSwap(key, nextVal, currentVal string) (bool, error) {
-	lock.Lock()
-	defer lock.Unlock()
+	m.Lock()
+	defer m.Unlock()
 
 	_, containsKey := store[key]
 	if !containsKey {
