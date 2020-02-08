@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
+
+	"golang.org/x/sync/errgroup"
 )
 
 func run(ctx context.Context) error {
@@ -29,27 +30,16 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		log.Println(run(ctx))
-		cancel()
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		log.Println(run(ctx))
-		cancel()
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		log.Println(srv.ListenAndServe())
-		cancel()
-	}()
+	eg, ctx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		return run(ctx)
+	})
+	eg.Go(func() error {
+		return run(ctx)
+	})
+	eg.Go(func() error {
+		return srv.ListenAndServe()
+	})
 
 	quit := make(chan os.Signal, 1)
 	defer close(quit)
@@ -66,15 +56,17 @@ func main() {
 		fmt.Println("received context cancel")
 	}
 
-	// シャットダウンの為だけのcontext
+	// シャットダウンだけが目的のcontext
 	sCtx, sCancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer sCancel()
 	if err := srv.Shutdown(sCtx); err != nil {
 		log.Println(err)
 	}
 
-	// doneを読んだら全てのgorutineが確実に終了することが前提の実装になっている
-	wg.Wait()
+	// コンテキストキャンセルしたら全てのgorutineが確実に終了することが前提の実装になっている
+	if err := eg.Wait(); err != nil {
+		log.Println(err)
+	}
 
 	fmt.Println("done")
 }
