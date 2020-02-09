@@ -22,10 +22,27 @@ func run(ctx context.Context) error {
 	}
 }
 
-func main() {
-	srv := &http.Server{
-		Addr: ":8080",
+func httpServe(ctx context.Context) error {
+	srv := &http.Server{Addr: ":8080"}
+
+	// errorを返したらコンテキストを閉じる
+	eg, ctx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		return srv.ListenAndServe()
+	})
+
+	// コンテキストキャンセルを受けたら
+	<-ctx.Done()
+	sCtx, sCancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer sCancel()
+	if err := srv.Shutdown(sCtx); err != nil {
+		return err
 	}
+
+	return eg.Wait()
+}
+
+func main() {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -38,7 +55,7 @@ func main() {
 		return run(ctx)
 	})
 	eg.Go(func() error {
-		return srv.ListenAndServe()
+		return httpServe(ctx)
 	})
 
 	quit := make(chan os.Signal, 1)
@@ -50,17 +67,8 @@ func main() {
 	// シグナルかコンテキストキャンセルを受ける
 	select {
 	case <-quit:
-		fmt.Println("received signal")
 		cancel()
 	case <-ctx.Done():
-		fmt.Println("received context cancel")
-	}
-
-	// シャットダウンだけが目的のcontext
-	sCtx, sCancel := context.WithTimeout(context.Background(), 1*time.Second)
-	defer sCancel()
-	if err := srv.Shutdown(sCtx); err != nil {
-		log.Println(err)
 	}
 
 	// コンテキストキャンセルしたら全てのgorutineが確実に終了することが前提の実装になっている
