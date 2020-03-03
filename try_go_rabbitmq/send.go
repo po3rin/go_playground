@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"time"
 
 	"github.com/streadway/amqp"
 )
@@ -31,16 +33,23 @@ func main() {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	body := "Hello World!"
-	err = ch.Publish(
-		"",     // exchange
-		q.Name, // routing key
-		false,  // mandatory
-		false,  // immediate
-		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
-		})
-	log.Printf(" [x] Sent %s", body)
-	failOnError(err, "Failed to publish a message")
+	bodyfmt := "Hello World %v!"
+	var i int
+	for {
+		i++
+		body := fmt.Sprintf(bodyfmt, i)
+		err = ch.Publish(
+			"",     // exchange
+			q.Name, // routing key
+			false,  // mandatory
+			false,  // immediate
+			amqp.Publishing{
+				ContentType: "text/plain",
+				Body:        []byte(string(body)),
+			},
+		)
+		fmt.Println(err)
+		fmt.Println(conn.IsClosed())
+		time.Sleep(1 * time.Second)
+	}
 }

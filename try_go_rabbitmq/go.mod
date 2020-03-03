@@ -1,3 +1,5 @@
 module go-playground/try_go_rabbitmq
 
-require github.com/streadway/amqp v0.0.0-20180806233856-70e15c650864
+require github.com/streadway/amqp v0.0.0-20200108173154-1c71cc93ed71
+
+go 1.13
