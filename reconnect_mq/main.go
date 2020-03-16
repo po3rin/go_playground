@@ -171,7 +171,7 @@ func NewQueue(url string, qName string) *queue {
 }
 
 func main() {
-	queue := NewQueue("amqp://guest:guest@localhost:5672/", "hello")
+	queue := NewQueue("amqp://guest:guest@localhost:32831/", "hello")
 	defer queue.Close()
 
 	queue.Consume(func(i string) {
