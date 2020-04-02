@@ -46,7 +46,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	json, err := ins.Value().MarshalJSON()
+	json, err := ins.Lookup("index").MarshalJSON()
 	if err != nil {
 		fmt.Printf("marshal json: %v\n", err)
 		os.Exit(1)
