@@ -2,26 +2,85 @@ package main
 
 import "fmt"
 
+type person struct {
+	name              string
+	orderOfPreference []string
+	rejectedList      map[string]struct{}
+	matched           string
+}
+
 func main() {
-	m := map[int][]string{
-		1: []string{"a", "b", "c", "d"},
-		2: []string{"c", "b", "a", "d"},
-		3: []string{"a", "b", "d", "c"},
-		4: []string{"c", "a", "d", "b"},
+	mList := []person{
+		{
+			name:              "mA",
+			orderOfPreference: []string{"fA", "fB", "fC", "fD"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
+		{
+			name:              "mB",
+			orderOfPreference: []string{"fC", "fB", "fA", "fD"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
+		{
+			name:              "mC",
+			orderOfPreference: []string{"fA", "fB", "fD", "fC"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
+		{
+			name:              "mD",
+			orderOfPreference: []string{"fA", "fB", "fD", "fC"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
 	}
-	f := map[string][]int{
-		"a": []int{1, 2, 3, 4},
-		"b": []int{2, 1, 4, 3},
-		"c": []int{2, 3, 1, 4},
-		"d": []int{1, 4, 3, 2},
+	fList := []person{
+		{
+			name:              "fA",
+			orderOfPreference: []string{"mA", "mB", "mC", "mD"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
+		{
+			name:              "fB",
+			orderOfPreference: []string{"mB", "mA", "mD", "mC"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
+		{
+			name:              "fC",
+			orderOfPreference: []string{"mB", "mC", "mA", "mD"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
+		{
+			name:              "fD",
+			orderOfPreference: []string{"mA", "mD", "mC", "mB"},
+			rejectedList:      make(map[string]struct{}, 4),
+		},
 	}
 
-	matching := stableMatching(m, f)
+	matching := stableMatching(mList, fList)
 	fmt.Println(matching)
 }
 
-// TODO: imp
-func stableMatching(m map[int][]string, f map[string][]int) []string {
-	matching := make([]string, len(m))
+func matchedList(mList []person) map[string]string {
+	matching := make(map[string]string, len(mList))
+	for _, m := range mList {
+		matching[m.name] = m.matched
+	}
 	return matching
+}
+
+func noMatched(mList []person) person {
+	for _, m := range mList {
+		if m.matched == "" {
+			return m
+		}
+	}
+}
+
+// TODO: imp
+func stableMatching(mList []person, fList []person) map[string]string {
+	var matchNum int
+	for matchNum == len(mList) {
+
+	}
+
+	return matchedList(mList)
 }
