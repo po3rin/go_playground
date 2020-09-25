@@ -2,56 +2,39 @@ package main
 
 import "fmt"
 
-type person struct {
-	name              string
+type people map[string]info
+type info struct {
 	orderOfPreference []string
-	rejectedList      map[string]struct{}
 	matched           string
 }
 
 func main() {
-	mList := []person{
-		{
-			name:              "mA",
+	mList := people{
+		"mA": info{
 			orderOfPreference: []string{"fA", "fB", "fC", "fD"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
-		{
-			name:              "mB",
+		"mB": info{
 			orderOfPreference: []string{"fC", "fB", "fA", "fD"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
-		{
-			name:              "mC",
+		"mC": info{
 			orderOfPreference: []string{"fA", "fB", "fD", "fC"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
-		{
-			name:              "mD",
-			orderOfPreference: []string{"fA", "fB", "fD", "fC"},
-			rejectedList:      make(map[string]struct{}, 4),
+		"mD": info{
+			orderOfPreference: []string{"fC", "fA", "fD", "fB"},
 		},
 	}
-	fList := []person{
-		{
-			name:              "fA",
+	fList := people{
+		"fA": info{
 			orderOfPreference: []string{"mA", "mB", "mC", "mD"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
-		{
-			name:              "fB",
+		"fB": info{
 			orderOfPreference: []string{"mB", "mA", "mD", "mC"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
-		{
-			name:              "fC",
+		"fC": info{
 			orderOfPreference: []string{"mB", "mC", "mA", "mD"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
-		{
-			name:              "fD",
+		"fD": info{
 			orderOfPreference: []string{"mA", "mD", "mC", "mB"},
-			rejectedList:      make(map[string]struct{}, 4),
 		},
 	}
 
@@ -59,28 +42,82 @@ func main() {
 	fmt.Println(matching)
 }
 
-func matchedList(mList []person) map[string]string {
+func matchedList(mList people) map[string]string {
 	matching := make(map[string]string, len(mList))
-	for _, m := range mList {
-		matching[m.name] = m.matched
+	for name, info := range mList {
+		matching[name] = info.matched
 	}
 	return matching
 }
 
-func noMatched(mList []person) (person, bool) {
-	for _, m := range mList {
-		if m.matched == "" {
-			return m, true
+func contract(order []string, matched string, proposer string) bool {
+	for _, name := range order {
+		if name == matched {
+			return false
+		}
+		if name == proposer {
+			return true
 		}
 	}
-	return person{}, false
+	return false
 }
 
-// TODO: imp
-func stableMatching(mList []person, fList []person) map[string]string {
-	var matchNum int
-	for matchNum == len(mList) {
+func rmExpectaion(orderOfPreference []string, rejecter string) []string {
+	for i, p := range orderOfPreference {
+		if p == rejecter {
+			copy(orderOfPreference[i:], orderOfPreference[i+1:])
+			orderOfPreference[len(orderOfPreference)-1] = ""
+			orderOfPreference = orderOfPreference[:len(orderOfPreference)-1]
+		}
+	}
+	return orderOfPreference
+}
 
+func noMatched(p people) string {
+	for name, info := range p {
+		if info.matched == "" {
+			return name
+		}
+	}
+	return ""
+}
+
+func stableMatching(mList people, fList people) map[string]string {
+	var matchNum int
+	for matchNum != len(mList) {
+		// 独身男性
+		mName := noMatched(mList)
+		mInfo := mList[mName]
+
+		// ターゲットの女性
+		fName := mInfo.orderOfPreference[0]
+		fInfo, _ := fList[fName]
+
+		// ターゲットの女性に相手がいなかったらマッチング
+		if fInfo.matched == "" {
+			fInfo.matched = mName
+			mInfo.matched = fName
+
+			matchNum++
+		} else {
+			// ターゲットの女性に相手がいるなら、
+			// その子の中で自分の方が順位が上ならマッチング
+			if contract(fInfo.orderOfPreference, fInfo.matched, mName) {
+				rejectedInfo := mList[fInfo.matched]
+				rejectedInfo.matched = ""
+				mList[fInfo.matched] = rejectedInfo
+
+				fInfo.matched = mName
+				mInfo.matched = fName
+			}
+		}
+
+		// 一度ターゲットにした女性はリストから消す
+		mInfo.orderOfPreference = rmExpectaion(mInfo.orderOfPreference, fName)
+
+		// List更新
+		mList[mName] = mInfo
+		fList[fName] = fInfo
 	}
 
 	return matchedList(mList)
