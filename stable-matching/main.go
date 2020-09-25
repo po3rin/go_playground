@@ -67,12 +67,13 @@ func matchedList(mList []person) map[string]string {
 	return matching
 }
 
-func noMatched(mList []person) person {
+func noMatched(mList []person) (person, bool) {
 	for _, m := range mList {
 		if m.matched == "" {
-			return m
+			return m, true
 		}
 	}
+	return person{}, false
 }
 
 // TODO: imp
