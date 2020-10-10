@@ -85,7 +85,7 @@ func noMatched(p people) string {
 func stableMatching(mList people, fList people) map[string]string {
 	var matchNum int
 	for matchNum != len(mList) {
-		// 独身男性
+		// 独身男性を選択
 		mName := noMatched(mList)
 		mInfo := mList[mName]
 
@@ -101,7 +101,8 @@ func stableMatching(mList people, fList people) map[string]string {
 			matchNum++
 		} else {
 			// ターゲットの女性に相手がいるなら、
-			// その子の中で自分の方が順位が上ならマッチング
+			// その女性の中で自分の方が順位が上ならマッチング
+			// すでにいた相手とは関係破棄
 			if contract(fInfo.orderOfPreference, fInfo.matched, mName) {
 				rejectedInfo := mList[fInfo.matched]
 				rejectedInfo.matched = ""
