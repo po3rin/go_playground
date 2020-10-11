@@ -10,31 +10,31 @@ type info struct {
 
 func main() {
 	mList := people{
-		"mA": info{
-			orderOfPreference: []string{"fA", "fB", "fC", "fD"},
+		"a": info{
+			orderOfPreference: []string{"1", "2", "3", "4"},
 		},
-		"mB": info{
-			orderOfPreference: []string{"fC", "fB", "fA", "fD"},
+		"b": info{
+			orderOfPreference: []string{"3", "2", "1", "4"},
 		},
-		"mC": info{
-			orderOfPreference: []string{"fA", "fB", "fD", "fC"},
+		"c": info{
+			orderOfPreference: []string{"1", "2", "4", "3"},
 		},
-		"mD": info{
-			orderOfPreference: []string{"fC", "fA", "fD", "fB"},
+		"d": info{
+			orderOfPreference: []string{"3", "1", "4", "2"},
 		},
 	}
 	fList := people{
-		"fA": info{
-			orderOfPreference: []string{"mA", "mB", "mC", "mD"},
+		"1": info{
+			orderOfPreference: []string{"a", "b", "c", "d"},
 		},
-		"fB": info{
-			orderOfPreference: []string{"mB", "mA", "mD", "mC"},
+		"2": info{
+			orderOfPreference: []string{"b", "a", "d", "c"},
 		},
-		"fC": info{
-			orderOfPreference: []string{"mB", "mC", "mA", "mD"},
+		"3": info{
+			orderOfPreference: []string{"b", "c", "a", "d"},
 		},
-		"fD": info{
-			orderOfPreference: []string{"mA", "mD", "mC", "mB"},
+		"4": info{
+			orderOfPreference: []string{"a", "d", "c", "b"},
 		},
 	}
 
@@ -42,7 +42,7 @@ func main() {
 	fmt.Println(matching)
 }
 
-func matchedList(mList people) map[string]string {
+func list2matchedList(mList people) map[string]string {
 	matching := make(map[string]string, len(mList))
 	for name, info := range mList {
 		matching[name] = info.matched
@@ -50,7 +50,7 @@ func matchedList(mList people) map[string]string {
 	return matching
 }
 
-func contract(order []string, matched string, proposer string) bool {
+func tryProposal(order []string, matched string, proposer string) bool {
 	for _, name := range order {
 		if name == matched {
 			return false
@@ -73,7 +73,7 @@ func rmExpectaion(orderOfPreference []string, rejecter string) []string {
 	return orderOfPreference
 }
 
-func noMatched(p people) string {
+func selectNotMatched(p people) string {
 	for name, info := range p {
 		if info.matched == "" {
 			return name
@@ -86,7 +86,7 @@ func stableMatching(mList people, fList people) map[string]string {
 	var matchNum int
 	for matchNum != len(mList) {
 		// 独身男性を選択
-		mName := noMatched(mList)
+		mName := selectNotMatched(mList)
 		mInfo := mList[mName]
 
 		// ターゲットの女性
@@ -103,7 +103,7 @@ func stableMatching(mList people, fList people) map[string]string {
 			// ターゲットの女性に相手がいるなら、
 			// その女性の中で自分の方が順位が上ならマッチング
 			// すでにいた相手とは関係破棄
-			if contract(fInfo.orderOfPreference, fInfo.matched, mName) {
+			if tryProposal(fInfo.orderOfPreference, fInfo.matched, mName) {
 				rejectedInfo := mList[fInfo.matched]
 				rejectedInfo.matched = ""
 				mList[fInfo.matched] = rejectedInfo
