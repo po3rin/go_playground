@@ -1,0 +1,43 @@
+{
+	query: bool: {
+		must: more_like_this: {
+			fields: [
+				"title",
+				"body",
+			]
+			like: [
+				{
+					"_index": "webcon"
+					"_id":    {{.ID}}
+				},
+			]
+			min_term_freq:   1
+			max_query_terms: 12
+		}
+		filter: [
+			{
+				terms: type: [
+					"webcon",
+				]
+			},
+			{
+				bool: should: [
+					{
+						bool: must: [
+							{
+								exists: field: "vod_end_time"
+							},
+							{
+								range: vod_end_time: gte: "now"
+							},
+						]
+					},
+					{
+						range: live_end_time: gte: "now"
+					},
+				]
+			},
+		]
+	}
+}
+
