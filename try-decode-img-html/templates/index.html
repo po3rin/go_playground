@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>画像一覧表示</title>
+</head>
+
+<body>
+	<!-- Goのテンプレートエンジンの中でも、イテレータアクション(反復処理)を使用します。 -->
+	<!-- ここに「"Images": encordImages」の複数枚の画像が一覧表示されていきます。 -->
+	{{ range .Images }}
+		<img src="data:image/jpg;base64,{{ . }}" /><br />
+	{{ end }}
+</body>
+
+</html>
