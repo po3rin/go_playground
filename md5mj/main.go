@@ -8,26 +8,33 @@ import (
 	"time"
 )
 
+var hai = []string{
+	"1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m",
+	"1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p",
+	"1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s",
+	"1z", "2z", "3z", "4z", "5z", "6z", "7z",
+}
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
+func yama() []string {
+	yama := hai
+	yama = append(yama, hai...)
+	yama = append(yama, hai...)
+	yama = append(yama, hai...)
+	rand.Shuffle(len(yama), func(i, j int) {
+		yama[i], yama[j] = yama[j], yama[i]
+	})
+	return yama
+}
+
 func md5hash(str string) string {
 	// string型を[]byte型の変更して使う
 	md5 := md5.Sum([]byte(str))
 
 	return fmt.Sprintf("%x", md5)
-}
-
-func heapPermutation(mystr []string, n int, permutations *[][]string) {
-	if n == 1 {
-		*permutations = append(*permutations, append([]string{}, mystr...))
-		return
-	}
-	for i := 0; i < n; i++ { //calculate the permutation using heap
-		heapPermutation(mystr, n-1, permutations)
-		if n%2 == 0 {
-			mystr[i], mystr[n-1] = mystr[n-1], mystr[i]
-		} else {
-			mystr[0], mystr[n-1] = mystr[n-1], mystr[0]
-		}
-	}
 }
 
 func splitN(msg string, n int) []string {
@@ -43,14 +50,16 @@ func splitN(msg string, n int) []string {
 	return result
 }
 
+func checkJansoul() {
+	s := "1p4p6z8p1s9m6z4z7s7p2z9s1s1z4p5z9s1m7p5s8p1m2z6s4z3z1z1m2s4p6z9s5s2z9m3p7s9s2p5z6p9m1p1s4s2p4z4s6z3p4s8s2s1z1p9p7s3p5p5s7z3s9p3z8s1p4z6p"
+	fmt.Println(md5hash(s))
+}
+
 func main() {
-	rand.Seed(time.Now().UnixNano())
+	// checkJansoul()
 
-	candidate := "5p8s1s7s4m7s1z3z2s2z9m4m5z6z8m"
+	candidate := "5p1z1s7s4m7s1z3z2s2z4m2p8s"
 	candidateSplit := splitN(candidate, 2)
-
-	fmt.Println("------candidate------")
-	fmt.Println(candidateSplit)
 
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(candidateSplit), func(i, j int) {
@@ -59,19 +68,34 @@ func main() {
 
 	answer := strings.Join(candidateSplit, "")
 	answerMd5 := md5hash(answer)
-	fmt.Println("------want------")
+
+	fmt.Println("------answer------")
 	fmt.Println(answer)
-	fmt.Println("------want md5------")
 	fmt.Println(answerMd5)
+	fmt.Println("------------------")
 
-	permutations := &[][]string{}
-	heapPermutation(candidateSplit, 3, permutations)
+	rand.Shuffle(len(candidateSplit), func(i, j int) {
+		candidateSplit[i], candidateSplit[j] = candidateSplit[j], candidateSplit[i]
+	})
 
-	for _, p := range *permutations {
+	// permutations := &[][]string{}
+	// heapPermutate(candidateSplit, len(candidateSplit), permutations)
+	permutations := backtrackPermutate(candidateSplit)
+	fmt.Println("------got permutations------")
+
+	rand.Shuffle(len(candidateSplit), func(i, j int) {
+		candidateSplit[i], candidateSplit[j] = candidateSplit[j], candidateSplit[i]
+	})
+
+	for _, p := range permutations {
 		s := strings.Join(p, "")
-		if answerMd5 == md5hash(s) {
+		hash := md5hash(s)
+		if answerMd5 == hash {
 			fmt.Println("------got------")
 			fmt.Println(s)
+			fmt.Println(hash)
+			fmt.Println("---------------")
+			break
 		}
 	}
 }
