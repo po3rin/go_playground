@@ -58,7 +58,7 @@ func checkJansoul() {
 func main() {
 	// checkJansoul()
 
-	candidate := "5p1z1s7s4m7s1z3z2s2z4m2p8s"
+	candidate := "5p1z1s7s4m7s1z3z2s2z4m"
 	candidateSplit := splitN(candidate, 2)
 
 	rand.Seed(time.Now().UnixNano())
@@ -71,17 +71,16 @@ func main() {
 
 	fmt.Println("------answer------")
 	fmt.Println(answer)
+	fmt.Println(len(candidateSplit))
 	fmt.Println(answerMd5)
-	fmt.Println("------------------")
 
 	rand.Shuffle(len(candidateSplit), func(i, j int) {
 		candidateSplit[i], candidateSplit[j] = candidateSplit[j], candidateSplit[i]
 	})
 
-	// permutations := &[][]string{}
-	// heapPermutate(candidateSplit, len(candidateSplit), permutations)
 	permutations := backtrackPermutate(candidateSplit)
-	fmt.Println("------got permutations------")
+	fmt.Println("------permutations info------")
+	fmt.Printf("len: %v\n", len(permutations))
 
 	rand.Shuffle(len(candidateSplit), func(i, j int) {
 		candidateSplit[i], candidateSplit[j] = candidateSplit[j], candidateSplit[i]
@@ -94,7 +93,6 @@ func main() {
 			fmt.Println("------got------")
 			fmt.Println(s)
 			fmt.Println(hash)
-			fmt.Println("---------------")
 			break
 		}
 	}
